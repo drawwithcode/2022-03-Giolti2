@@ -32,10 +32,10 @@ class Photo{
 		image(this.img, -videoHeight * 0.5, -videoHeight * 0.5);
 		pop()
 
-		noFill()
+		/* noFill()
 		stroke(255, 0, 0)
 
-		circle(0, 0, videoHeight*1.1)
+		circle(0, 0, videoHeight*1.1) */
 
 		pop()
 	}
@@ -76,22 +76,24 @@ class Flash{
 const videoWidth = 640;
 const videoHeight = 360;
 
-let capture;
-
 let flash = new Flash();
-
 let photos = [];
 
+let capture;
+let click;
+let c;
+
 function preload() {
-	// put preload code here
+	click = loadSound("./SOUND/click.wav");
 }
 
 function setup() {
-	createCanvas(windowWidth, windowHeight);
+	c = createCanvas(windowWidth, windowHeight);
 
 	angleMode(DEGREES)
 
-	select("#smile").elt.addEventListener("click", smile)
+	select("#smile").elt.addEventListener("click", smile);
+	select("#save").elt.addEventListener("click", savePicture);
 
 	let constraints = {
 		video: {
@@ -105,12 +107,10 @@ function setup() {
 
 	capture = createCapture(constraints)
 	capture.hide();
-	// put setup code here
 }
 
 function draw() {
-	// put drawing code here
-	background(53, 101, 57)
+	background(222, 184, 135);
 
 	photos.forEach(function (photo) {
 		photo.draw();
@@ -148,9 +148,15 @@ function mouseReleased() {
 function smile() {
 	if (capture.loadedmetadata) {
 		flash.start();
+		click.play();
 		setTimeout(function () {
 			let img = capture.get(videoWidth * 7 / 32, 0, videoWidth * 18 / 32, videoHeight);
 			photos.push(new Photo(img))
 		}, 100)
 	}
+}
+
+function savePicture() {
+	console.log("saved!")
+	saveCanvas(c, "myCanvas", "png")
 }
