@@ -14,6 +14,7 @@ class Photo{
 		this.y = height * (0.5 + random(-Y_JITTER, Y_JITTER))
 	}
 
+	//draws the polaroid with the saved image
 	draw() {
 		push()
 
@@ -40,6 +41,7 @@ class Photo{
 		pop()
 	}
 
+	//basic collision checker, could improve to check the rectangle shape
 	mouseOn() {
 		return dist(mouseX, mouseY, this.x, this.y) < videoHeight * 0.55
 	}
@@ -53,11 +55,13 @@ class Flash{
 		this.startTime = 0;
 	}
 
+	//saves the time it was started
 	start() {
 		this.time = FLASH_DURATION;
 		this.startTime = millis();
 	}
 
+	//fills the canvas white based on time since start
 	update() {
 		push()
 
@@ -94,6 +98,7 @@ function setup() {
 
 	select("#smile").elt.addEventListener("click", smile);
 	select("#save").elt.addEventListener("click", savePicture);
+	select("#reset").elt.addEventListener("click", resetPictures);
 
 	let constraints = {
 		video: {
@@ -120,18 +125,24 @@ function draw() {
 }
 
 function mousePressed() {
+	//reverse array cycling since the items are drawn with last on top
 	for (let i = photos.length - 1; i >= 0; i--){
 		if (photos[i].mouseOn()) {
+			//takes out the clicked instance on top
 			dragPhoto = photos.splice(i, 1)[0];
 			dragOffX = dragPhoto.x - mouseX;
 			dragOffY = dragPhoto.y - mouseY;
+
+			//puts the clicked instance on top of everything else
 			photos.push(dragPhoto);
 
+			//breaks the cycle to stop at first instance found
 			break;
 		}
 	}
 }
 
+//updates the held photo's position on drag
 function mouseDragged() {
 	if (dragPhoto) {
 		dragPhoto.x = mouseX + dragOffX;
@@ -139,16 +150,20 @@ function mouseDragged() {
 	}
 }
 
+//resets the held photo state
 function mouseReleased() {
 	dragPhoto = null;
 	dragOffX = 0;
 	dragOffY = 0;
 }
 
+//starts the flash and the sound
 function smile() {
 	if (capture.loadedmetadata) {
 		flash.start();
 		click.play();
+
+		//waits a moment to shoot the picture, so the screen is flashing white
 		setTimeout(function () {
 			let img = capture.get(videoWidth * 7 / 32, 0, videoWidth * 18 / 32, videoHeight);
 			photos.push(new Photo(img))
@@ -156,7 +171,13 @@ function smile() {
 	}
 }
 
+//redundant explanation
 function savePicture() {
 	console.log("saved!")
 	saveCanvas(c, "myCanvas", "png")
+}
+
+//redundant explanation #2
+function resetPictures() {
+	photos = []
 }

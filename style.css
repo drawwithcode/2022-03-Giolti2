@@ -11,9 +11,9 @@ canvas {
 
 .footer {
   position: fixed;
-  right: 35vw;
+  right: 25vw;
   bottom: 8vh;
-  width: 30vw;
+  width: 50vw;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -35,4 +35,8 @@ canvas {
 
 #save {
   background-color: #008CBA;
+}
+
+#reset {
+  background-color: crimson;
 }
